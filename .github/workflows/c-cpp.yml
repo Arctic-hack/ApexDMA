@@ -22,19 +22,18 @@ jobs:
     - name: make distcheck
       run: make distcheck
 
-            - 名称：安装 Java JDK
-  使用：actions/setup-java@v4.0.0
-  和：
+     
+
     # 要设置的 Java 版本。采用整体或 semver Java 版本。请参阅 README 文件中支持的语法示例
     java-version: # 可选
     # `.java-version` 文件的路径。请参阅 README 文件中支持的语法示例
     java-version-file: # 可选
     # Java 发行版。请参阅 README 文件中支持的发行版列表
-    分配：
+   
     # 包类型（jdk、jre、jdk+fx、jre+fx）
     java-package: # 可选，默认是jdk
     # 包的架构（默认为动作运行器的架构）
-    架构：# 可选
+   
     # 压缩后的JDK所在路径
     jdk文件: # 可选
     # 如果您希望操作检查满足版本规范的最新可用版本，请设置此选项
@@ -66,24 +65,17 @@ jobs:
     # Maven 工具链供应商的名称（如果不需要默认名称“${distribution}”）。请参阅高级用法文件中支持的语法示例
     mvn-toolchain-vendor: # 可选
 
-                  - 名称：上传构建工件
-  使用：actions/upload-artifact@v4.3.1
-  和：
+
     # 神器名称
     name: # 可选，默认为artifact
     # 描述要上传内容的文件、目录或通配符模式
-    小路：
+   
     # 使用提供的路径找不到文件时所需的行为。
-可用选项：
-  warn：输出警告但不要使操作失败
-  错误：操作失败并显示错误消息
-  ignore：不输出任何警告或错误，操作不会失败
+
 
     if-no-files-found: # 可选，默认为 warn
     # 工件将在几天后过期的持续时间。 0 表示使用默认保留。
-最少 1 天。最长 90 天，除非从存储库设置页面进行更改。
 
-    保留天数：# 可选
     # Zlib 应用于工件存档的压缩级别。该值的范围为 0 到 9： - 0：无压缩 - 1：最佳速度 - 6：默认压缩（与 GNU Gzip 相同） - 9：最佳压缩 级别越高，压缩效果越好，但需要更长的时间才能完成。对于不易压缩的大文件，建议使用值 0，以显着加快上传速度。
 
     压缩级别: # 可选，默认为 6
@@ -91,15 +83,13 @@ jobs:
 
     overwrite: # 可选，默认为 false
 
-                - 名称：下载构建工件
-  使用：actions/download-artifact@v4.1.2
-  和：
+
     # 要下载的工件的名称。如果未指定，则下载运行的所有工件。
-    名称：# 可选
+ 
     # 目标路径。支持基本波浪线扩展。默认为 $GITHUB_WORKSPACE
     路径: # 可选
     # 与应该下载的工件相匹配的全局模式。如果指定了名称，则忽略。
-    模式：# 可选
+
     # 当多个工件匹配时，这会更改目标目录的行为。如果为 true，下载的工件将位于路径指定的同一目录中。如果为 false，则下载的工件将被提取到指定路径内的单独命名目录中。
     merge-multiple: # 可选，默认为 false
     # 用于通过 GitHub API 进行身份验证的 GitHub 令牌。从不同的存储库或不同的工作流程运行下载工件时，这是必需的。如果未指定，该操作将尝试从当前存储库和当前工作流运行下载工件。
@@ -109,19 +99,17 @@ jobs:
     # 上传所需下载工件的工作流程运行的 ID。如果指定了 github-token，则这是将从中下载工件的运行。
     run-id: # 可选，默认为 ${{ github.run_id }}
           
-                      - 名称：安装 Java JDK
-  使用：actions/setup-java@v4.0.0
-  和：
+
     # 要设置的 Java 版本。采用整体或 semver Java 版本。请参阅 README 文件中支持的语法示例
     java-version: # 可选
     # `.java-version` 文件的路径。请参阅 README 文件中支持的语法示例
     java-version-file: # 可选
     # Java 发行版。请参阅 README 文件中支持的发行版列表
-    分配：
+   
     # 包类型（jdk、jre、jdk+fx、jre+fx）
     java-package: # 可选，默认是jdk
     # 包的架构（默认为动作运行器的架构）
-    架构：# 可选
+    
     # 压缩后的JDK所在路径
     jdk文件: # 可选
     # 如果您希望操作检查满足版本规范的最新可用版本，请设置此选项

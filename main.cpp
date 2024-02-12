@@ -84,7 +84,7 @@ void ScatterReadTeamAndName(std::vector<Player*>& players) {
         Player* player = players[i];
 
         // Verify that the BasePointer is not 0 before adding scatter read requests
-        if (player->BasePointer != 0) {
+        if (mem.IsValidPointer(player->BasePointer)) {
             // Scatter read request for NameBuffer
             uint64_t nameBufferAddress = player->BasePointer + OFF_NAME;
             mem.AddScatterReadRequest(handle, nameBufferAddress, player->NameBuffer, sizeof(player->NameBuffer));
@@ -118,7 +118,7 @@ void ScatterReadPlayerAttributes(std::vector<Player*>& players) {
         Player* player = players[i];
 
         // Verify that the BasePointer is not 0 before adding scatter read requests
-        if (player->BasePointer != 0) {
+        if (mem.IsValidPointer(player->BasePointer)) {
             if (!player->IsDummy()) {
                 // Scatter read request for IsDead
                 uint64_t isDeadAddress = player->BasePointer + OFF_LIFE_STATE;
@@ -191,9 +191,6 @@ void UpdateCore() {
     static bool PlayersPopulated = false;
     try {
         while (true) {
-            // Total Profiling Start
-            auto TotalProfilingStart = std::chrono::high_resolution_clock::now();
-
             // Initial Misc Reads //
             MiscBaseScatter(Map, Myself, GameCamera, ESP);
 
@@ -220,7 +217,6 @@ void UpdateCore() {
             if (!Myself->ValidPosition()) {
 				Players->clear();
                 PlayersPopulated = false;
-                //std::cout << "Invalid Position" << std::endl;
 				continue;
 			}
 
@@ -299,10 +295,6 @@ void UpdateCore() {
             ProfileOperation([&]() {
                 AimAssist->Update();
             }, AimAssistProfilingElapsed);
-
-            // Total Profiling End
-            auto TotalProfilingEnd = std::chrono::high_resolution_clock::now();
-            TotalProfilingElapsed = std::chrono::duration_cast<std::chrono::microseconds>(TotalProfilingEnd - TotalProfilingStart);
         }
     }
     catch (const std::exception& ex) {
@@ -314,7 +306,6 @@ void UpdateCore() {
 void Profiling() {
 	while (true) {
 		std::cout << "---- Profiling ----" << std::endl;
-		std::cout << "Total: " << TotalProfilingElapsed.count() << "us" << std::endl;
 		std::cout << "LocalPlayer: " << LocalPlayerProfilingElapsed.count() << "us" << std::endl;
 		std::cout << "PlayerPopulate: " << PlayerPopulateProfilingElapsed.count() << "us" << std::endl;
 		std::cout << "PlayerAttributes: " << PlayerAttributesProfilingElapsed.count() << "us" << std::endl;
@@ -350,10 +341,10 @@ int main()
 
     try {
         for (int i = 0; i < 70; i++)
-            HumanPlayers->push_back(new Player(i, Myself, GameCamera));
+            HumanPlayers->push_back(new Player(i, Myself, Map));
 
         for (int i = 0; i < 15000; i++)
-            Dummies->push_back(new Player(i, Myself, GameCamera));
+            Dummies->push_back(new Player(i, Myself, Map));
 
         std::cout << "-----------------------------" << std::endl;
         std::locale::global(std::locale("C"));
@@ -371,7 +362,7 @@ int main()
 
         // Threads
         std::thread coreThread(UpdateCore);
-        std::thread profilingThread(Profiling);
+        //std::thread profilingThread(Profiling);
         coreThread.join();
     }
     catch (...) {}

@@ -2,16 +2,16 @@
 #include <string>
 #include "Offsets.hpp"
 #include "LocalPlayer.hpp"
+#include "Level.hpp"
 #include "DMALibrary/Memory/Memory.h"
 #include "HitboxType.hpp"
 #include "Vector2D.hpp"
 #include "Vector3D.hpp"
 #include "Matrix.hpp"
-#include "Camera.hpp"
 
 struct Player {
     LocalPlayer* Myself;
-    Camera* GameCamera;
+    Level* Map;
 
     int Index;
     uint64_t BasePointer = 0;
@@ -48,8 +48,6 @@ struct Player {
     const int VisCheckThreshold = 10;
     bool IsVisible;
 
-    int BiggestDifference = 0;
-
     bool IsLocal;
     bool IsAlly;
     bool IsHostile;
@@ -59,10 +57,10 @@ struct Player {
 
     bool IsLockedOn;
 
-    Player(int PlayerIndex, LocalPlayer* Me, Camera* camera) {
+    Player(int PlayerIndex, LocalPlayer* Me, Level* Map) {
         this->Index = PlayerIndex;
         this->Myself = Me;
-        this->GameCamera = camera;
+        this->Map = Map;
     }
 
     uint64_t GetMilliseconds()
@@ -102,7 +100,7 @@ struct Player {
     }
 
     void Read() {
-        if (BasePointer == 0) return;
+        if (!mem.IsValidPointer(BasePointer)) { BasePointer = 0; return; }
         if (!IsPlayer() && !IsDummy()) { BasePointer = 0; return; }
 
         IsAimedAt = LastTimeAimedAtPrevious < LastTimeAimedAt;
@@ -118,10 +116,16 @@ struct Player {
             Distance2DToLocalPlayer = Myself->LocalOrigin.To2D().Distance(LocalOrigin.To2D());
         }
 
+        //if (BasePointer != Myself->BasePointer && IsPlayer()) {
+        //    std::cout << "--- Player " << Index << " ---" << std::endl;
+        //    std::cout << "GlowEnable: " << GlowEnable << " | GlowThroughWall: " << GlowThroughWall << " | HighlightID: " << HighlightID << std::endl;
+        //    std::cout << "GlowEnableAddr: " << std::hex << BasePointer + OFF_GLOW_ENABLE << " | GlowThroughWallAddr: " << BasePointer + OFF_GLOW_THROUGH_WALL << " | HighlightIDAddr: " << BasePointer + OFF_GLOW_HIGHLIGHT_ID + 1 << std::dec << std::endl;
+        //}
+
     }
 
     bool IsValid() {
-        return BasePointer != 0 && Health > 0 && (IsPlayer() || IsDummy());
+        return mem.IsValidPointer(BasePointer) && !IsDead && Health > 0 && (IsPlayer() || IsDummy() && Map->IsFiringRange);
     }
 
     bool IsCombatReady() {
